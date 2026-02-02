@@ -1,0 +1,7 @@
+services:
+  daily-briefing:
+    build: .
+    env_file: .env
+    # Override to run informational post only, or run both via a runner script:
+    # command: ["python", "scripts/informational_post.py", "quote"]
+    # command: ["python", "scripts/informational_post.py", "tip"]

@@ -1,0 +1,10 @@
+# Optional: model (default gpt-4o-mini)
+model: gpt-4o-mini
+
+# List of prompts to run; each is sent to ChatGPT and the reply is collected.
+prompts:
+  - "Check CNN for the latest news and summarize with links."
+  - "Check BBC for top tech stories and summarize with links."
+
+# Optional. If set, one more call is made with this prompt and the collected responses as context; the reply is sent to Telegram.
+summarize: "Combine the above into one brief summary with links. Keep it concise."
