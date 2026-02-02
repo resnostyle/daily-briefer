@@ -1,0 +1,34 @@
+# https://mise.jdx.dev/
+[tools]
+python = "3.11"
+hk = "latest"
+pkl = "latest"
+ruff = "latest"
+
+[tasks.build]
+description = "Build Docker image"
+run = "docker build -t daily-briefing:latest ."
+
+[tasks.run-briefing]
+description = "Run daily briefing (default)"
+run = "docker run --rm --env-file .env daily-briefing:latest"
+
+[tasks.run-github]
+description = "Run GitHub trending digest"
+run = "docker run --rm --env-file .env daily-briefing:latest python scripts/github_digest.py"
+
+[tasks.run-hn]
+description = "Run Hacker News top 10"
+run = "docker run --rm --env-file .env daily-briefing:latest python scripts/hackernews_top.py"
+
+[tasks.run-chatgpt]
+description = "Run ChatGPT brief (YAML prompts)"
+run = "docker run --rm --env-file .env daily-briefing:latest python scripts/chatgpt_brief.py"
+
+[tasks.pre-commit]
+description = "Run pre-commit hook (hk)"
+run = "hk run pre-commit"
+
+[tasks.install-hooks]
+description = "Install git hooks via hk (uses mise x in hooks)"
+run = "hk install --mise"
