@@ -1,0 +1,22 @@
+amends "package://github.com/jdx/hk/releases/download/v1.32.0/hk@1.32.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.32.0/hk@1.32.0#/Builtins.pkl"
+
+local linters = new Mapping<String, Step> {
+  ["ruff"] = new Step {
+    types = List("python")
+    check = "ruff check {{files}} && ruff format --check {{files}}"
+    fix = "ruff check --fix {{files}} && ruff format {{files}}"
+  }
+  ["yaml"] = new Step {
+    glob = List("*.yaml", "*.yml")
+    check = "python -c \"import sys, yaml; [yaml.safe_load(open(f)) for f in sys.argv[1:]]\" {{files}}"
+  }
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps = linters
+  }
+}

@@ -1,11 +1,31 @@
 # Daily Briefing
 
-Containerized daily scripts that build a daily briefing and informational posts and publish them to Telegram. The host runs the container on a schedule (cron or systemd timer).
+**Purpose:** This repo runs scheduled scripts that produce daily briefings and informational posts and deliver them to you via Telegram. Everything runs in containers and can be triggered by cron or systemd. You get:
+
+- **Daily briefing** — A configurable morning brief (placeholder sections; plug in weather, headlines, reminders).
+- **Informational posts** — Short tips or quotes on a schedule.
+- **GitHub trending digest** — Top 10 trending repos (today).
+- **Hacker News top 10** — Top stories from HN.
+- **ChatGPT brief** — YAML-defined prompts (e.g. “check CNN for latest news and summarize with links”) run through the OpenAI API, optionally summarized, then sent to Telegram.
+
+Edit config (e.g. `config/prompts.yaml`) and run the container on a schedule; no code changes needed for new prompts or brief types.
 
 ## Prerequisites
 
 - Docker (and optionally Docker Compose)
 - A Telegram bot token ([@BotFather](https://t.me/BotFather)) and the chat/channel id to send to
+
+## Development
+
+- **mise** — Runtime and tasks are defined in `.mise.toml`. With [mise](https://mise.jdx.dev/) installed, run:
+  - `mise install` — Install Python, hk, pkl, ruff (and other tools).
+  - `mise run build` — Build the Docker image.
+  - `mise run run-briefing` — Run the daily briefing (requires `.env`).
+  - `mise run run-github` / `mise run run-hn` / `mise run run-chatgpt` — Run each brief type.
+  - `mise run install-hooks` — Install git hooks via [hk](https://hk.jdx.dev/) (uses `hk install --mise` so hooks run with `mise x`).
+  - `mise run pre-commit` — Run the pre-commit hook manually (`hk run pre-commit`).
+- **Pre-commit (hk)** — Git hooks are managed by [hk](https://hk.jdx.dev/); config is in `hk.pkl`. Hooks run ruff (Python lint/format) and a YAML check. See [hk mise integration](https://hk.jdx.dev/mise_integration.html).
+- **CI** — A GitHub Action (`.github/workflows/build.yml`) builds the container image on push/PR and pushes the image to GitHub Container Registry (GHCR) on push to the default branch.
 
 ## Configuration
 
