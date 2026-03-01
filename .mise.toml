@@ -10,7 +10,7 @@ description = "Build Docker image"
 run = "docker build -t daily-briefing:latest ."
 
 [tasks.run-briefing]
-description = "Run daily briefing (default)"
+description = "Run all briefs (default)"
 run = "docker run --rm --env-file .env daily-briefing:latest"
 
 [tasks.run-github]
@@ -24,6 +24,10 @@ run = "docker run --rm --env-file .env daily-briefing:latest python scripts/hack
 [tasks.run-chatgpt]
 description = "Run ChatGPT brief (YAML prompts)"
 run = "docker run --rm --env-file .env daily-briefing:latest python scripts/chatgpt_brief.py"
+
+[tasks.run-one]
+description = "Run one brief (e.g. mise run run-one github)"
+run = "docker run --rm --env-file .env daily-briefing:latest"
 
 [tasks.pre-commit]
 description = "Run pre-commit hook (hk)"

@@ -1,7 +1,15 @@
+# Required: copy .env.example to .env and set TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
+# For ChatGPT brief, set OPENAI_API_KEY in .env.
+# Default: container runs all briefs. Override with command to run one script.
 services:
   daily-briefing:
     build: .
+    image: daily-briefing:latest
     env_file: .env
-    # Override to run informational post only, or run both via a runner script:
-    # command: ["python", "scripts/informational_post.py", "quote"]
-    # command: ["python", "scripts/informational_post.py", "tip"]
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - PROMPTS_YAML_PATH=${PROMPTS_YAML_PATH:-}
+      - POST_TYPE=${POST_TYPE:-}
+    # No command = run all briefs. Or run one: command: ["github"], command: ["hn"], command: ["chatgpt"], command: ["post", "quote"]

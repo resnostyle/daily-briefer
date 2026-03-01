@@ -44,11 +44,23 @@ docker build -t daily-briefing:latest .
 
 ## Run once
 
-**Daily briefing (default):**
+**All briefs (default):**
 
 ```bash
 docker run --rm --env-file .env daily-briefing:latest
 ```
+
+This runs daily briefing, GitHub digest, HN top 10, and ChatGPT brief in sequence. To run one script only, pass its name (or shorthand):
+
+```bash
+docker run --rm --env-file .env daily-briefing:latest briefing
+docker run --rm --env-file .env daily-briefing:latest github
+docker run --rm --env-file .env daily-briefing:latest hn
+docker run --rm --env-file .env daily-briefing:latest chatgpt
+docker run --rm --env-file .env daily-briefing:latest post quote
+```
+
+Names: `daily_briefing`|`briefing`, `github_digest`|`github`, `hackernews_top`|`hn`, `chatgpt_brief`|`chatgpt`, `informational_post`|`post` (pass `quote` or `tip` for post).
 
 **Informational post (quote or tip):**
 
@@ -95,14 +107,18 @@ summarize: "Combine the above into one brief summary with links. Keep it concise
 
 **With Docker Compose:**
 
+The container runs all briefs by default. Override with `command` to run one script:
+
 ```bash
 docker compose run --rm daily-briefing
-# Or override command:
-docker compose run --rm daily-briefing python scripts/informational_post.py tip
-docker compose run --rm daily-briefing python scripts/github_digest.py
-docker compose run --rm daily-briefing python scripts/hackernews_top.py
-docker compose run --rm daily-briefing python scripts/chatgpt_brief.py
+# Or run one script:
+docker compose run --rm daily-briefing github
+docker compose run --rm daily-briefing hn
+docker compose run --rm daily-briefing chatgpt
+docker compose run --rm daily-briefing post quote
 ```
+
+`docker-compose.yml` loads `.env` and passes `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `OPENAI_API_KEY`, `PROMPTS_YAML_PATH`, and `POST_TYPE` into the container. Copy `.env.example` to `.env` and set the required values.
 
 ## Scheduling with cron
 
@@ -112,7 +128,7 @@ Use an absolute path to your env file and image. Example: run the daily briefing
 0 8 * * * docker run --rm --env-file /path/to/daily-briefing/.env daily-briefing:latest
 ```
 
-To run both briefing and a post in one go, use a wrapper script that runs the container twice (or add a `scripts/run_all.py` that runs both and a single cron line).
+To run all briefs on a schedule: `docker compose run --rm daily-briefing` or `docker run --rm --env-file .env daily-briefing:latest` (default runs all).
 
 ## Scheduling with systemd
 
@@ -155,5 +171,6 @@ sudo systemctl enable --now daily-briefing.timer
 - `scripts/github_digest.py` — Fetches GitHub trending (top 10 repos today) and sends digest to Telegram.
 - `scripts/hackernews_top.py` — Fetches Hacker News top 10 stories and sends to Telegram.
 - `scripts/chatgpt_brief.py` — Runs prompts from YAML via OpenAI (ChatGPT), optionally summarizes, sends result to Telegram.
+- `scripts/run_all.py` — Runs daily briefing, GitHub digest, HN top 10, and ChatGPT brief in sequence (used by `docker compose run run-all`).
 - `config/prompts.yaml` — YAML config: `prompts` (list of prompts), optional `summarize`, optional `model`. Override path with `PROMPTS_YAML_PATH`.
 - `src/telegram.py` — Shared Telegram publisher (Bot API; uses `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`).

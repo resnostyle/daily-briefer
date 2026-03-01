@@ -8,8 +8,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY config/ ./config/
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 ENV PYTHONPATH=/app
 
-# Default: run daily briefing so "docker run ..." does one full run
-CMD ["python", "scripts/daily_briefing.py"]
+# Default: run all briefs. Override with one script name to run that script only, e.g.:
+#   docker run ... github  |  docker run ... post quote
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD []
