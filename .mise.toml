@@ -1,6 +1,6 @@
 # https://mise.jdx.dev/
 [tools]
-python = "3.11"
+python = "3.14.6"
 hk = "latest"
 pkl = "latest"
 ruff = "latest"
